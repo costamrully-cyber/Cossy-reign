@@ -1,48 +1,396 @@
-/* Matrix-style code rain — neon green, real-time */
-(function(){
-  const canvas = document.getElementById('rain');
-  const ctx    = canvas.getContext('2d');
+/* ══════════════════════════════════════════════
+   COSSY REIGN — gothic / hacker aesthetic
+   ══════════════════════════════════════════════ */
 
-  let W, H, cols, drops;
-  const GLYPHS = 'アカサタナハマヤラワ0123456789ABCDEF<>/\\{}[]$#%&*+=';
-  const FONT   = 16;
+:root{
+  --neon:      #00ff41;
+  --neon-dim:  #0a5d1a;
+  --neon-glow: rgba(0,255,65,.55);
+  --blood:     #ff0033;
+  --bg:        #000000;
+  --ink:       #b8ffc9;
+}
 
-  function resize(){
-    W = canvas.width  = window.innerWidth;
-    H = canvas.height = window.innerHeight;
-    cols = Math.floor(W / FONT);
-    drops = new Array(cols).fill(1).map(() => Math.random() * H);
-  }
+*{ box-sizing:border-box; margin:0; padding:0; }
 
-  function draw(){
-    /* fade trail */
-    ctx.fillStyle = 'rgba(0,0,0,0.08)';
-    ctx.fillRect(0,0,W,H);
+html,body{ height:100%; }
 
-    ctx.font = FONT + 'px monospace';
+body{
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Metal Mania', cursive;
+  overflow-x:hidden;
+  min-height:100vh;
+  position:relative;
+  cursor: crosshair;
+}
 
-    for(let i=0;i<cols;i++){
-      const ch = GLYPHS[Math.floor(Math.random()*GLYPHS.length)];
-      const x  = i * FONT;
-      const y  = drops[i];
+/* ── LAYER 0 : the hacking room ─────────────── */
+.room{
+  position:fixed; inset:0; z-index:0;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(0,255,65,.12), transparent 55%),
+    radial-gradient(ellipse at 80% 80%, rgba(0,255,65,.10), transparent 50%),
+    linear-gradient(180deg, #000 0%, #020602 40%, #000 100%);
+  background-size: cover;
+  background-position:center;
+  opacity:.85;
+  filter: contrast(1.1) saturate(1.2) brightness(.7);
+}
+/* When you have a real photo, uncomment + add URL:
+.room{ background-image:url('../img/room.jpg'); }
+*/
 
-      /* bright head */
-      ctx.fillStyle = '#c8ffd4';
-      ctx.shadowColor = '#00ff41';
-      ctx.shadowBlur  = 10;
-      ctx.fillText(ch, x, y);
+/* ── LAYER 0 : matrix canvas ─────────────────── */
+#rain{
+  position:fixed; inset:0; z-index:1;
+  opacity:.55;
+  pointer-events:none;
+}
 
-      /* dim tail */
-      ctx.shadowBlur = 0;
-      ctx.fillStyle = 'rgba(0,255,65,0.55)';
-      ctx.fillText(ch, x, y - FONT);
+/* ── LAYER 1 : scanlines + vignette ──────────── */
+.scanlines{
+  position:fixed; inset:0; z-index:2; pointer-events:none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0,255,65,.05) 0px,
+    rgba(0,255,65,.05) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  mix-blend-mode: overlay;
+}
+.vignette{
+  position:fixed; inset:0; z-index:2; pointer-events:none;
+  background: radial-gradient(ellipse at center, transparent 45%, #000 100%);
+}
 
-      drops[i] += FONT * 0.7;
-      if (drops[i] > H && Math.random() > 0.975) drops[i] = 0;
-    }
-  }
+/* ── LAYER 2 : terminal content ──────────────── */
+.terminal{
+  position:relative; z-index:3;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 64px 22px 40px;
+}
 
-  window.addEventListener('resize', resize);
-  resize();
-  setInterval(draw, 45);
-})();
+/* ── HEADER ──────────────────────────────────── */
+.sigil{ text-align:center; margin-bottom:54px; }
+
+.boot{
+  font-family:'IM Fell English SC', serif;
+  color: var(--neon-dim);
+  font-size:.82rem;
+  letter-spacing:2px;
+  margin-bottom:22px;
+}
+.boot b{ color: var(--neon); text-shadow:0 0 8px var(--neon-glow); }
+
+.logo{
+  font-family:'Grenze Gotisch', cursive;
+  font-weight:900;
+  font-size: clamp(2.6rem, 10vw, 5.5rem);
+  line-height:1;
+  color: var(--neon);
+  letter-spacing:.04em;
+  text-shadow:
+    0 0 8px var(--neon-glow),
+    0 0 24px var(--neon-glow),
+    0 0 48px rgba(0,255,65,.35);
+  position:relative;
+  animation: flicker 4.5s infinite;
+}
+.logo::before,
+.logo::after{
+  content: attr(data-text);
+  position:absolute; inset:0;
+  color: var(--blood);
+  opacity:.0;
+}
+.logo::before{ animation: glitch-a 3.2s infinite; }
+.logo::after { animation: glitch-b 4.1s infinite; color:#00e0ff; }
+
+.tagline{
+  margin-top:14px;
+  font-family:'IM Fell English SC', serif;
+  font-size:.9rem;
+  letter-spacing:5px;
+  color: var(--neon-dim);
+}
+
+/* ── CONSOLE FRAME (terminal window) ────────── */
+.console{
+  position:relative;
+  background: linear-gradient(180deg, rgba(0,20,5,.92), rgba(0,5,0,.96));
+  border:1px solid rgba(0,255,65,.45);
+  border-radius:6px;
+  box-shadow:
+    0 0 24px rgba(0,255,65,.15),
+    inset 0 0 60px rgba(0,0,0,.9);
+  margin-bottom: 44px;
+  overflow:hidden;
+}
+
+/* scanning light sweep across console */
+.console::after{
+  content:'';
+  position:absolute; left:0; right:0; top:-40%;
+  height:40%;
+  background: linear-gradient(180deg, transparent, rgba(0,255,65,.08), transparent);
+  animation: scan 6s linear infinite;
+  pointer-events:none;
+}
+@keyframes scan{
+  0%   { top:-40%; }
+  100% { top:120%; }
+}
+
+/* title bar */
+.console-bar{
+  display:flex; align-items:center; gap:8px;
+  padding: 10px 14px;
+  background: rgba(0,0,0,.65);
+  border-bottom:1px solid rgba(0,255,65,.3);
+  font-family:'Courier New', monospace;
+}
+.console-bar .dot{
+  width:11px; height:11px; border-radius:50%;
+  display:inline-block;
+}
+.console-bar .red   { background:#ff5f56; box-shadow:0 0 6px #ff5f56; }
+.console-bar .yellow{ background:#ffbd2e; box-shadow:0 0 6px #ffbd2e; }
+.console-bar .green { background:#27c93f; box-shadow:0 0 6px #27c93f; }
+
+.console-title{
+  margin-left:12px;
+  font-size:.72rem;
+  color: var(--neon);
+  letter-spacing:1px;
+  text-shadow:0 0 6px var(--neon-glow);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* ── NODE GRID — the 2 · 1 · 2 command layout ─ */
+.grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    "yt ig"
+    "wa wa"
+    "tg fb";
+  gap: 14px;
+  padding: 22px;
+}
+
+/* assign each node to a slot */
+.grid .node:nth-child(1){ grid-area: yt; } /* YouTube  */
+.grid .node:nth-child(2){ grid-area: ig; } /* Instagram */
+.grid .node:nth-child(3){ grid-area: wa; } /* WhatsApp — featured */
+.grid .node:nth-child(4){ grid-area: tg; } /* Telegram */
+.grid .node:nth-child(5){ grid-area: fb; } /* Facebook */
+
+/* ── NODES ─────────────────────────────────── */
+.node{
+  --brand: var(--neon);
+  position:relative;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  gap:12px;
+  padding: 22px 12px 18px;
+  text-decoration:none;
+  color: var(--ink);
+  background: linear-gradient(160deg, rgba(0,25,8,.9), rgba(0,0,0,.9));
+  border:1px solid rgba(0,255,65,.3);
+  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+  transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease, background .35s ease;
+  overflow:hidden;
+}
+
+.node::before{
+  content:'';
+  position:absolute; inset:0;
+  background: radial-gradient(circle at 50% 0%, var(--brand), transparent 70%);
+  opacity:0;
+  transition: opacity .4s ease;
+  pointer-events:none;
+}
+.node:hover{
+  transform: translateY(-4px);
+  border-color: var(--brand);
+  background: linear-gradient(160deg, rgba(0,40,12,.95), rgba(0,0,0,.95));
+  box-shadow:
+    0 0 12px var(--brand),
+    0 0 32px color-mix(in srgb, var(--brand) 55%, transparent),
+    inset 0 0 18px rgba(0,0,0,.9);
+}
+.node:hover::before{ opacity:.16; }
+
+/* corner accents (top-left + bottom-right crosshair dots) */
+.node::after{
+  content:'';
+  position:absolute;
+  inset:6px;
+  border-top:1px solid var(--brand);
+  border-right:1px solid var(--brand);
+  opacity:.25;
+  pointer-events:none;
+  clip-path: polygon(0 0, 18px 0, 18px 1px, 1px 1px, 1px 18px, 0 18px, 0 0,
+                     100% 100%, calc(100% - 18px) 100%, calc(100% - 18px) calc(100% - 1px),
+                     calc(100% - 1px) calc(100% - 1px), calc(100% - 1px) calc(100% - 18px),
+                     100% calc(100% - 18px), 100% 100%);
+}
+
+/* rotating dashed ring */
+.node .ring{
+  position:relative;
+  width:70px; height:70px;
+  display:grid; place-items:center;
+  border-radius:50%;
+  border:1px dashed color-mix(in srgb, var(--brand) 55%, transparent);
+  animation: spin 14s linear infinite;
+}
+.node .ring::before{
+  content:'';
+  position:absolute; inset:-6px;
+  border-radius:50%;
+  border:1px solid color-mix(in srgb, var(--brand) 25%, transparent);
+}
+.node:hover .ring{ animation-duration: 3.5s; }
+
+.node svg{
+  width:34px; height:34px;
+  fill: var(--brand);
+  filter: drop-shadow(0 0 6px var(--brand));
+  transition: transform .35s ease;
+}
+.node:hover svg{ transform: scale(1.1); }
+
+.node .label{
+  font-family:'Grenze Gotisch', cursive;
+  font-weight:600;
+  letter-spacing:3px;
+  font-size:.78rem;
+  color: color-mix(in srgb, var(--brand) 88%, #fff 12%);
+  text-transform:uppercase;
+  text-shadow: 0 0 8px color-mix(in srgb, var(--brand) 45%, transparent);
+}
+
+/* ── FEATURED NODE (WhatsApp — the centerpiece) ─ */
+.node.featured{
+  flex-direction: row;
+  justify-content: center;
+  gap: 22px;
+  padding: 24px 28px;
+  border-color: color-mix(in srgb, var(--brand) 65%, transparent);
+  background: linear-gradient(120deg, rgba(0,45,15,.95), rgba(0,10,3,.95));
+  box-shadow:
+    0 0 20px color-mix(in srgb, var(--brand) 35%, transparent),
+    inset 0 0 30px rgba(0,0,0,.85);
+}
+.node.featured .ring{
+  width: 88px; height: 88px;
+  border-width: 2px;
+}
+.node.featured svg{
+  width: 46px; height: 46px;
+}
+.node.featured .label-wrap{
+  display:flex; flex-direction:column; gap:6px;
+  text-align:left;
+}
+.node.featured .label{
+  font-size: 1.25rem;
+  letter-spacing: 5px;
+}
+.node.featured .sub{
+  font-family:'IM Fell English SC', serif;
+  font-size:.68rem;
+  letter-spacing:3px;
+  color: var(--neon-dim);
+}
+.node.featured .arrow{
+  font-family:'Courier New', monospace;
+  color: var(--brand);
+  font-size: 1.4rem;
+  text-shadow:0 0 10px var(--brand);
+  animation: blink 1.6s step-end infinite;
+}
+@keyframes blink{ 50%{ opacity:.15; } }
+
+/* ── CONSOLE FOOTER BAR ─────────────────────── */
+.console-foot{
+  display:flex; flex-wrap:wrap; align-items:center; gap:10px;
+  padding: 10px 16px;
+  background: rgba(0,0,0,.7);
+  border-top:1px solid rgba(0,255,65,.3);
+  font-family:'Courier New', monospace;
+  font-size:.68rem;
+  color: var(--neon);
+  letter-spacing:2px;
+  text-shadow:0 0 6px var(--neon-glow);
+}
+.console-foot .sep{ color: var(--neon-dim); }
+.console-foot .pulse{
+  color: var(--neon);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+@keyframes pulse{
+  0%,100%{ opacity:1; text-shadow:0 0 8px var(--neon-glow); }
+  50%    { opacity:.25; text-shadow:none; }
+}
+
+/* ── FOOTER ──────────────────────────────────── */
+.foot{
+  text-align:center;
+  font-family:'IM Fell English SC', serif;
+  font-size:.72rem;
+  letter-spacing:3px;
+  color: var(--neon-dim);
+  display:flex; gap:14px; justify-content:center; flex-wrap:wrap;
+}
+.foot .dot{ color: var(--blood); }
+
+/* ── ANIMATIONS ──────────────────────────────── */
+@keyframes spin{ to{ transform: rotate(360deg); } }
+
+@keyframes flicker{
+  0%,19%,21%,23%,25%,54%,56%,100%{ opacity:1; }
+  20%,22%,24%,55%{ opacity:.72; }
+}
+
+@keyframes glitch-a{
+  0%, 92%, 100%{ opacity:0; transform:translate(0,0); }
+  93%{ opacity:.6; transform:translate(-3px,1px); }
+  95%{ opacity:.4; transform:translate(2px,-2px); }
+}
+@keyframes glitch-b{
+  0%, 88%, 100%{ opacity:0; transform:translate(0,0); }
+  89%{ opacity:.5; transform:translate(3px,-1px); }
+  91%{ opacity:.3; transform:translate(-2px,2px); }
+}
+
+/* ── MOBILE ────────────────────────────────── */
+@media (max-width:520px){
+  .grid{ padding:14px; gap:12px; }
+  .node{ padding:16px 8px 14px; gap:10px; }
+  .node .ring{ width:58px; height:58px; }
+  .node svg{ width:28px; height:28px; }
+  .node .label{ font-size:.68rem; letter-spacing:2px; }
+  .node.featured{ padding:18px; gap:14px; flex-direction:column; text-align:center; }
+  .node.featured .ring{ width:64px; height:64px; }
+  .node.featured svg{ width:34px; height:34px; }
+  .node.featured .label{ font-size:.95rem; letter-spacing:3px; }
+  .node.featured .label-wrap{ text-align:center; }
+  .node.featured .arrow{ display:none; }
+  .console-title{ font-size:.62rem; letter-spacing:.5px; }
+  .console-foot{ font-size:.58rem; letter-spacing:1px; gap:6px; }
+}
+
+@media (max-width:380px){
+  .terminal{ padding: 40px 14px 30px; }
+  .grid{ grid-template-areas:
+    "yt ig"
+    "wa wa"
+    "tg fb"; }
+}
