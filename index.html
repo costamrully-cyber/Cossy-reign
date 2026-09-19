@@ -1,1 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>COSSY REIGN</title>
+<meta name="description" content="COSSY REIGN — encrypted contact node. Find me everywhere." />
+<meta name="theme-color" content="#000000" />
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@300;600;900&family=Nosifer&family=Metal+Mania&family=IM+Fell+English+SC&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+
+  <!-- ░░ LAYER 0 : hacking room (drop your photo here later) ░░ -->
+  <div class="room" aria-hidden="true"></div>
+
+  <!-- ░░ LAYER 0 : live code rain ░░ -->
+  <canvas id="rain" aria-hidden="true"></canvas>
+
+  <!-- ░░ LAYER 1 : CRT scanlines + vignette ░░ -->
+  <div class="scanlines" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <!-- ░░ LAYER 2 : content ░░ -->
+  <main class="terminal">
+
+    <header class="sigil">
+      <p class="boot">&gt; establishing encrypted channel… <b>CONNECTED</b></p>
+      <h1 class="logo" data-text="COSSY REIGN">COSSY REIGN</h1>
+      <p class="tagline">// anonymous · untraceable · everywhere</p>
+    </header>
+
+    <nav id="links" class="grid" aria-label="Social links"></nav>
+
+    <footer class="foot">
+      <span>© COSSY REIGN</span>
+      <span class="dot">◆</span>
+      <span>no trackers · no logs · no mercy</span>
+    </footer>
+
+  </main>
+
+  <script src="js/links.js"></script>
+  <script src="js/matrix.js"></script>
+</body>
+</html>
