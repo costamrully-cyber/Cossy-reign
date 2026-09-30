@@ -318,6 +318,49 @@ body{
 }
 @keyframes blink{ 50%{ opacity:.15; } }
 
+/* ── PLAY BLACKOUT NODE ─────────────────────── */
+.play-node{
+  flex-direction: row;
+  justify-content: center;
+  gap: 22px;
+  padding: 24px 28px;
+  margin: 0 22px 22px;
+  border-color: rgba(255,0,51,.65);
+  background: linear-gradient(120deg, rgba(40,0,20,.95), rgba(0,10,3,.95));
+  box-shadow:
+    0 0 20px rgba(255,0,51,.35),
+    inset 0 0 30px rgba(0,0,0,.85);
+  --brand: #ff0033;
+}
+.play-node .ring{
+  width: 88px; height: 88px;
+  border-width: 2px;
+}
+.play-node svg{
+  width: 44px; height: 44px;
+}
+.play-node .label-wrap{
+  display:flex; flex-direction:column; gap:6px;
+  text-align:left;
+}
+.play-node .label{
+  font-size: 1.15rem;
+  letter-spacing: 5px;
+}
+.play-node .sub{
+  font-family:'IM Fell English SC', serif;
+  font-size:.68rem;
+  letter-spacing:3px;
+  color: var(--neon-dim);
+}
+.play-node .arrow{
+  font-family:'Courier New', monospace;
+  color: var(--brand);
+  font-size: 1.4rem;
+  text-shadow:0 0 10px var(--brand);
+  animation: blink 1.6s step-end infinite;
+}
+
 /* ── CONSOLE FOOTER BAR ─────────────────────── */
 .console-foot{
   display:flex; flex-wrap:wrap; align-items:center; gap:10px;
@@ -351,6 +394,89 @@ body{
 }
 .foot .dot{ color: var(--blood); }
 
+/* ══════════════════════════════════════════════
+   AMBIENT SOUND TOGGLE (fixed bottom-right)
+   ══════════════════════════════════════════════ */
+
+.sound-toggle{
+  position: fixed;
+  bottom: 22px;
+  right: 22px;
+  z-index: 50;
+  width: 54px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(160deg, rgba(0,25,8,.92), rgba(0,0,0,.95));
+  border: 1px solid rgba(0,255,65,.45);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow:
+    0 0 14px rgba(0,255,65,.35),
+    inset 0 0 18px rgba(0,0,0,.9);
+  transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sound-toggle:hover{
+  transform: scale(1.08);
+  border-color: var(--neon);
+  box-shadow:
+    0 0 22px rgba(0,255,65,.7),
+    inset 0 0 18px rgba(0,0,0,.9);
+}
+
+.sound-toggle svg{
+  width: 22px; height: 22px;
+  fill: var(--neon);
+  filter: drop-shadow(0 0 6px var(--neon-glow));
+  position: absolute;
+  transition: opacity .3s ease;
+}
+
+/* default: muted state → shows OFF (crossed) icon */
+.sound-toggle .ico-on  { opacity: 0; }
+.sound-toggle .ico-off { opacity: 1; }
+
+/* when playing → shows ON icon + pulse ring */
+.sound-toggle.playing .ico-on  { opacity: 1; }
+.sound-toggle.playing .ico-off { opacity: 0; }
+
+.sound-toggle .sound-pulse{
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  border: 1px solid var(--neon);
+  opacity: 0;
+  pointer-events: none;
+}
+.sound-toggle.playing .sound-pulse{
+  animation: sound-ping 1.8s ease-out infinite;
+}
+@keyframes sound-ping{
+  0%   { transform: scale(1);   opacity: .8; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+/* attention pulse when autoplay is blocked (needs tap) */
+.sound-toggle.needs-tap{
+  animation: attract 1.4s ease-in-out infinite;
+}
+@keyframes attract{
+  0%,100%{ box-shadow: 0 0 14px rgba(0,255,65,.35), inset 0 0 18px rgba(0,0,0,.9); }
+  50%    { box-shadow: 0 0 28px rgba(0,255,65,.85), inset 0 0 18px rgba(0,0,0,.9); }
+}
+
+@media (max-width:520px){
+  .sound-toggle{
+    bottom: 16px;
+    right: 16px;
+    width: 48px;
+    height: 48px;
+  }
+  .sound-toggle svg{ width: 20px; height: 20px; }
+}
+
 /* ── ANIMATIONS ──────────────────────────────── */
 @keyframes spin{ to{ transform: rotate(360deg); } }
 
@@ -383,14 +509,18 @@ body{
   .node.featured .label{ font-size:.95rem; letter-spacing:3px; }
   .node.featured .label-wrap{ text-align:center; }
   .node.featured .arrow{ display:none; }
+
+  .play-node{ padding:18px; gap:14px; flex-direction:column; text-align:center; margin: 0 14px 14px; }
+  .play-node .ring{ width:64px; height:64px; }
+  .play-node svg{ width:34px; height:34px; }
+  .play-node .label{ font-size:.95rem; letter-spacing:3px; }
+  .play-node .label-wrap{ text-align:center; }
+  .play-node .arrow{ display:none; }
+
   .console-title{ font-size:.62rem; letter-spacing:.5px; }
   .console-foot{ font-size:.58rem; letter-spacing:1px; gap:6px; }
 }
 
 @media (max-width:380px){
   .terminal{ padding: 40px 14px 30px; }
-  .grid{ grid-template-areas:
-    "yt ig"
-    "wa wa"
-    "tg fb"; }
 }
