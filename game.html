@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>BLACKOUT · COSSY REIGN</title>
+<meta name="theme-color" content="#000000" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@300;600;900&family=IM+Fell+English+SC&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/game.css" />
+</head>
+<body>
+
+<div class="stage" id="stage">
+
+  <canvas id="game" aria-hidden="true"></canvas>
+
+  <!-- HUD -->
+  <div class="hud" aria-hidden="true">
+    <div class="hud-top">
+      <div class="depth">DEPTH <b id="depth">000000</b><span>m</span></div>
+      <div class="lives" id="lives"></div>
+    </div>
+    <div class="sector-msg" id="sectorMsg"></div>
+  </div>
+
+  <!-- GLITCH FLASH -->
+  <div class="glitch-overlay" id="glitchOverlay" aria-hidden="true"></div>
+
+  <!-- TITLE SCREEN -->
+  <div class="overlay active" id="titleScreen">
+    <div class="ov-inner">
+      <p class="ov-boot">&gt; root@cossy-reign:~# ./blackout --start</p>
+      <h1 class="ov-title">BLACKOUT</h1>
+      <p class="ov-sub">COSSY&nbsp;REIGN</p>
+
+      <div class="ov-stats">
+        <div class="stat">
+          <span>BEST DEPTH</span>
+          <b id="titleBest">000000</b>
+        </div>
+      </div>
+
+      <ul class="ov-how">
+        <li><b>← →</b> or <b>A / D</b> — steer</li>
+        <li><b>TAP</b> left / right — steer (mobile)</li>
+        <li><b>3 LIVES</b> · collect <b>10 shards</b> → BLACKOUT</li>
+      </ul>
+
+      <p class="ov-cta">TAP&nbsp;TO&nbsp;BEGIN</p>
+      <a class="ov-back" href="index.html">◀ RETURN TO HUB</a>
+    </div>
+  </div>
+
+  <!-- DEATH SCREEN -->
+  <div class="overlay" id="deadScreen">
+    <div class="ov-inner">
+      <p class="ov-boot dead">&gt; <span id="deadMsg">CONNECTION TERMINATED</span></p>
+      <h1 class="ov-title dead">YOU&nbsp;DIED</h1>
+
+      <div class="ov-stats">
+        <div class="stat"><span>DEPTH</span><b id="deadDepth">000000</b></div>
+        <div class="stat"><span>BEST</span><b id="deadBest">000000</b></div>
+      </div>
+
+      <p class="ov-cta">TAP&nbsp;TO&nbsp;RETRY</p>
+      <a class="ov-back" href="index.html">◀ RETURN TO HUB</a>
+    </div>
+  </div>
+
+</div>
+
+<script src="js/game.js"></script>
+</body>
+</html>
